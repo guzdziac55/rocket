@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import Pagination from "./Pagination";
 import classes from "./SortableTable.module.css";
+import { paginateRows } from "./helpers";
 
 const fakeData = [
   {
@@ -20,93 +21,71 @@ const fakeData = [
   },
 ];
 
-// declarate Types:
-
 type Data = typeof fakeData; // data type from fake data
-
 type SortKeys = keyof Data[0];
-
 type SortOrder = "ascn" | "desc";
 
 interface SortableTableGen {
   data: Data;
-} // generic component // props data
+}
 
-// data is our json
+function sortRows(
+  data: Data,
+  sort: { order: string; orderBy: SortKeys }
+): Data {
+  if (!sort) return data;
 
-function sortData({
-  tableData,
-  sortKey,
-  reverse,
-}: {
-  tableData: Data;
-  sortKey: SortKeys;
-  reverse: boolean;
-}) {
-  if (!sortKey) return tableData;
+  const reverse = sort.order === "desc";
 
-  const sortedData = tableData.sort((a, b) => {
-    console.log(a);
-    console.log(b);
-    return a[sortKey] > b[sortKey] ? 1 : -1;
+  const sortedData = data.sort((a, b) => {
+    return a[sort.orderBy] > b[sort.orderBy] ? 1 : -1;
   });
-
   if (reverse) {
     return sortedData.reverse();
   }
-
   return sortedData;
 }
 
 const SortableTable: React.FC<SortableTableGen> = ({ data }) => {
-  const [sortKey, setSortKey] = useState<SortKeys>("mission_name"); // put here key from fake api     // po czym ma sortować
-  const [sortOrder, setSortOrder] = useState<SortOrder>("ascn"); // do sprwadzenia po czym ma sortować    // czy asc czy dsc
+  const [activePage, setActivePage] = useState<number>(1);
+  const rowsPerPage: number = 3;
+  const count: number = data.length;
+  const totalPages: number = Math.ceil(count / rowsPerPage);
 
-  //  struktura  sortKeys z data + label strong   ( key:SortKey , label:string - moja nazwa)
-  // header   czyli data object key properties { id: 1 } + label name
+  const [sort, setSort] = useState<{ order: SortOrder; orderBy: SortKeys }>({
+    order: "ascn",
+    orderBy: "id",
+  });
+  const sortedRows = sortRows(data, sort);
+  const calculatedRows = paginateRows(sortedRows, activePage, rowsPerPage);
 
-  //   our columns
+  const handleSort = (event: React.MouseEvent<unknown>, accessor: SortKeys) => {
+    setActivePage(1);
+    setSort((prevSort) => ({
+      order:
+        prevSort.order === "ascn" && prevSort.orderBy === accessor
+          ? "desc"
+          : "ascn",
+      orderBy: accessor,
+    }));
+  };
+
   const headers: { key: SortKeys; label: string }[] = [
     { key: "id", label: "id" },
     { key: "mission_name", label: "name" },
     { key: "launch_date_utc", label: "date" },
   ];
 
-  //    TABLE INFO
-  const [activePage, setActivePage] = useState<number>(1);
-  const rowsPerPage: number = 3;
-  const count: number = data.length;
-  const totalPages: number = Math.ceil(count / rowsPerPage); //
-  const calculatedRows = data.slice(
-    (activePage - 1) * rowsPerPage,
-    activePage * rowsPerPage
-  );
-
-  const sortedData = useCallback(
-    () => sortData({ tableData: data, sortKey, reverse: sortOrder === "desc" }),
-    [data, sortKey, sortOrder]
-  );
-
-  const changeSort = (key: SortKeys) => {
-    setSortOrder(sortOrder === "ascn" ? "desc" : "ascn");
-    setSortKey(key);
-    console.log(sortOrder);
-  };
-
-  //  check html table
   return (
     <>
       <table>
-        {/* t head */}
         <thead>
           <tr>
             {headers.map((row) => {
               return (
                 <th key={row.key}>
                   {row.label}
-                  {/* component is added here becouse of rotate icon if asc desc */}
-                  <button onClick={() => changeSort(row.key)}>
-                    {" "}
+                  <button onClick={(e) => handleSort(e, row.key)}>
                     sort later
                   </button>
                 </th>
@@ -116,7 +95,7 @@ const SortableTable: React.FC<SortableTableGen> = ({ data }) => {
         </thead>
 
         <tbody>
-          {sortedData().map((lunch) => {
+          {calculatedRows.map((lunch) => {
             return (
               <tr key={lunch.id} className={classes.tablerow}>
                 <td>{lunch.id}</td>
@@ -139,69 +118,3 @@ const SortableTable: React.FC<SortableTableGen> = ({ data }) => {
 };
 
 export default SortableTable;
-
-// function SortableTable({ data }: { data: Data }) {
-//   const [sortKey, setSortKey] = useState<SortKeys>("last_name");
-//   const [sortOrder, setSortOrder] = useState<SortOrder>("ascn");
-
-//   const headers: { key: SortKeys; label: string }[] = [
-//     { key: "id", label: "ID" },
-//     { key: "first_name", label: "First name" },
-//     { key: "last_name", label: "Last name" },
-//     { key: "email", label: "Email" },
-//     { key: "gender", label: "Gender" },
-//     { key: "ip_address", label: "IP address" },
-//   ];
-
-//   const sortedData = useCallback(
-//     () => sortData({ tableData: data, sortKey, reverse: sortOrder === "desc" }),
-//     [data, sortKey, sortOrder]
-//   );
-
-//   function changeSort(key: SortKeys) {
-//     setSortOrder(sortOrder === "ascn" ? "desc" : "ascn");
-
-//     setSortKey(key);
-//   }
-
-//   return (
-//     <table>
-//       <thead>
-//         <tr>
-//           {headers.map((row) => {
-//             return (
-//               <td key={row.key}>
-//                 {row.label}{" "}
-//                 <SortButton
-//                   columnKey={row.key}
-//                   onClick={() => changeSort(row.key)}
-//                   {...{
-//                     sortOrder,
-//                     sortKey,
-//                   }}
-//                 />
-//               </td>
-//             );
-//           })}
-//         </tr>
-//       </thead>
-
-//       <tbody>
-//         {sortedData().map((person) => {
-//           return (
-//             <tr key={person.id}>
-//               <td>{person.id}</td>
-//               <td>{person.first_name}</td>
-//               <td>{person.last_name}</td>
-//               <td>{person.email}</td>
-//               <td>{person.gender}</td>
-//               <td>{person.ip_address}</td>
-//             </tr>
-//           );
-//         })}
-//       </tbody>
-//     </table>
-//   );
-// }
-
-// export default SortableTable;
