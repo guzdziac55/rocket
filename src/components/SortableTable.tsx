@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import Pagination from "./Pagination";
 import classes from "./SortableTable.module.css";
+import { filterByValue } from "./help";
 import { paginateRows } from "./helpers";
 
 const fakeData = [
@@ -21,6 +22,8 @@ const fakeData = [
   },
 ];
 
+// set types and functional component interface
+
 type Data = typeof fakeData; // data type from fake data
 type SortKeys = keyof Data[0];
 type SortOrder = "ascn" | "desc";
@@ -29,6 +32,7 @@ interface SortableTableGen {
   data: Data;
 }
 
+// put into helper funtion
 function sortRows(
   data: Data,
   sort: { order: string; orderBy: SortKeys }
@@ -46,9 +50,18 @@ function sortRows(
   return sortedData;
 }
 
+// function filterByValue() {
+//   return fakeData.filter((o) =>
+//     Object.keys(o).some((k) =>
+//       o[k].toLowerCase().includes(string.toLowerCase())
+//     )
+//   );
+// }
+
 const SortableTable: React.FC<SortableTableGen> = ({ data }) => {
+  // filterByValue();
   const [activePage, setActivePage] = useState<number>(1);
-  const rowsPerPage: number = 3;
+  const rowsPerPage: number = 5;
   const count: number = data.length;
   const totalPages: number = Math.ceil(count / rowsPerPage);
 
@@ -56,6 +69,7 @@ const SortableTable: React.FC<SortableTableGen> = ({ data }) => {
     order: "ascn",
     orderBy: "id",
   });
+
   const sortedRows = sortRows(data, sort);
   const calculatedRows = paginateRows(sortedRows, activePage, rowsPerPage);
 
@@ -75,6 +89,10 @@ const SortableTable: React.FC<SortableTableGen> = ({ data }) => {
     { key: "mission_name", label: "name" },
     { key: "launch_date_utc", label: "date" },
   ];
+
+  // {
+  //   /* <Table>, <TableRow>, <TableHead> */
+  // }
 
   return (
     <>

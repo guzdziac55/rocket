@@ -1,5 +1,15 @@
 import React from "react";
 
+import Button from "@mui/material/Button";
+import DeleteIcon from "@mui/icons-material/Delete";
+// icons
+import { Stack } from "@mui/material";
+
+import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
+import SkipNextIcon from "@mui/icons-material/SkipNext";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+
 interface ParginationProps {
   activePage: number;
   count: number;
@@ -15,44 +25,41 @@ const Pagination: React.FC<ParginationProps> = ({
   totalPages,
   setActivePage,
 }) => {
-  //   const beginning: number =
-  //     activePage === 1 ? 1 : rowsPerPage * (activePage - 1) + 1;
-
   return (
     <>
-      <div className="pagination">
-        <button disabled={activePage === 1} onClick={() => setActivePage(1)}>
-          ⏮️ First
-        </button>{" "}
-        /
-        <button
+      <Stack direction="row" justifyContent="center" spacing={2} mb={4}>
+        <Button
+          onClick={() => setActivePage(1)}
           disabled={activePage === 1}
+          variant="outlined"
+          startIcon={<SkipPreviousIcon />}
+        >
+          first
+        </Button>
+        <Button
           onClick={() => setActivePage(activePage - 1)}
-        >
-          ⬅️ Previous
-        </button>
-        <button
-          disabled={activePage === totalPages}
+          disabled={activePage === 1}
+          variant="outlined"
+          startIcon={<NavigateBeforeIcon />}
+        ></Button>
+        <p>
+          Page {activePage} of {totalPages}
+        </p>
+        <Button
           onClick={() => setActivePage(activePage + 1)}
-        >
-          Next ➡️
-        </button>
-        <button
           disabled={activePage === totalPages}
+          variant="outlined"
+          endIcon={<NavigateNextIcon />}
+        ></Button>
+        <Button
           onClick={() => setActivePage(totalPages)}
+          disabled={activePage === totalPages}
+          variant="outlined"
+          endIcon={<SkipNextIcon />}
         >
-          Last ⏭️
-        </button>
-      </div>
-
-      <p>
-        {/*  actual page info  ! */}
-        Page {activePage} of {totalPages}
-      </p>
-      <p>
-        {/* rows info */}
-        {/* Rows: {beginning === end ? end : `${beginning} - ${end}`} of {count} */}
-      </p>
+          last
+        </Button>
+      </Stack>
     </>
   );
 };

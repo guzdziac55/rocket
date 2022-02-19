@@ -1,6 +1,5 @@
-// import Data {}[]
-// active page number
-// rowsPerPage : number
+import moment from "moment";
+
 const fakeData = [
   {
     launch_date_utc: "2014-01-06T18:06:00.000Z",
@@ -21,14 +20,6 @@ const fakeData = [
 
 type Data = typeof fakeData; // data type from fake data
 
-// return data()
-
-// interface paginateRowsProps {
-//   sortedRows: Data;
-//   activePage: number;
-//   rowsPerPage: number;
-// }
-
 export function paginateRows(
   sortedRows: Data,
   activePage: number,
@@ -40,6 +31,6 @@ export function paginateRows(
   );
 }
 
-//  najpierw filtrowanie > jak przeflidrowanych jest kilka to
-// wrzuć do posortowanych jak jest dużo i używam paginacji to >
-// last state pagination >
+export function convertUTCDate(dateUTC: string): string {
+  return moment(dateUTC, "YYYY-MM-DDTHH:mm:ssZ").local().format("YYYY-MM-DD");
+}

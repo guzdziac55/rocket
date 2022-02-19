@@ -2,8 +2,14 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import SortableTable from "./components/SortableTable";
-
+import MuiTable from "./components/MuiTable";
+import { StyledEngineProvider } from "@mui/material/styles";
 const fakeData = [
+  {
+    launch_date_utc: "2014-01-06T18:05:00.000Z",
+    mission_name: "Thaicom 6",
+    id: "1332",
+  },
   {
     launch_date_utc: "2014-01-06T18:06:00.000Z",
     mission_name: "Thaicom 6",
@@ -39,13 +45,34 @@ const fakeData = [
     mission_name: "eeeeeeee",
     id: "5",
   },
+  {
+    launch_date_utc: "2015-12-22T01:29:00.000Z",
+    mission_name: "eeeeeeee",
+    id: "51",
+  },
+  {
+    launch_date_utc: "2015-12-22T01:29:00.000Z",
+    mission_name: "eeeeeeee",
+    id: "52",
+  },
+  {
+    launch_date_utc: "2015-12-22T01:29:00.000Z",
+    mission_name: "eeeeeeee",
+    id: "56",
+  },
 ];
+
+// filter by 2016-01-19
+// yyyy-mm-dd
 
 function App() {
   return (
-    <div className="App">
-      <SortableTable data={fakeData}></SortableTable>
-    </div>
+    <StyledEngineProvider>
+      <div className="App">
+        {/* <SortableTable data={fakeData}></SortableTable> */}
+        <MuiTable data={fakeData}></MuiTable>
+      </div>
+    </StyledEngineProvider>
   );
 }
 
