@@ -101,7 +101,7 @@ function sortRows(data: Data, sort: SortOrder, sortBy: SortKeys): Data {
 }
 
 const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
-    const [activePage, setActivePage] = useState<number>(1)
+    const [activePage, handleActivePage] = useState<number>(1)
     const [filterValue, setFilterValue] = useState<string>('')
     const [filterBy, setFilterBy] = useState<SortKeys>('mission_name')
     // sort state
@@ -109,20 +109,20 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
     const [sortBy, setSortBy] = useState<SortKeys>('id')
 
     const handleSort = (property: SortKeys) => {
-        setActivePage(1)
+        handleActivePage(1)
         const isAsc = sortBy === property && sort === 'asc'
         setSort(isAsc ? 'desc' : 'asc')
         setSortBy(property)
     }
 
     function handleFilter(e: React.ChangeEvent<HTMLInputElement>) {
-        setActivePage(1)
+        handleActivePage(1)
         const { value } = e.target
         setFilterValue(value)
     }
 
     function handleFilterBy(e: SelectChangeEvent) {
-        setActivePage(1)
+        handleActivePage(1)
         setFilterValue('')
         const value = e.target.value as
             | 'launch_date_utc'
@@ -239,7 +239,7 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
                 <Pagination
                     activePage={activePage}
                     totalPages={totalPages}
-                    setActivePage={setActivePage}
+                    onPageChange={handleActivePage}
                 />
             </Paper>
         </Box>
