@@ -1,0 +1,1 @@
+// ;['<rootDir>/jest-setup.js']
