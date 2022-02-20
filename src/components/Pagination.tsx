@@ -9,16 +9,13 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
 
 interface ParginationProps {
     activePage: number
-    count: number
-    rowsPerPage: number
     totalPages: number
     setActivePage: (page: number) => void
 }
 
+// eslint-disable-next-line react/function-component-definition
 const Pagination: React.FC<ParginationProps> = ({
     activePage,
-    count,
-    rowsPerPage,
     totalPages,
     setActivePage,
 }) => {

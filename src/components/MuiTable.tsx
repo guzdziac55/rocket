@@ -1,3 +1,4 @@
+/* eslint-disable react/function-component-definition */
 import React, { useState } from 'react'
 import Table from '@mui/material/Table'
 import TableHead from '@mui/material/TableHead'
@@ -168,6 +169,8 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
         case 'launch_date_utc':
             textFilterHint = 'Type date format: yyyy-mm-dd'
             break
+        default:
+            textFilterHint = 'Type id'
     }
 
     return (
@@ -255,8 +258,6 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
                 </Table>
                 <Pagination
                     activePage={activePage}
-                    count={dataCount}
-                    rowsPerPage={rowsPerPage}
                     totalPages={totalPages}
                     setActivePage={setActivePage}
                 />
