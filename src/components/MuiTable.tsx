@@ -1,4 +1,3 @@
-/* eslint-disable react/function-component-definition */
 import React, { useState } from 'react'
 import Table from '@mui/material/Table'
 import TableHead from '@mui/material/TableHead'
@@ -18,8 +17,12 @@ import { Box, Paper, SelectChangeEvent } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import Pagination from './Pagination'
 
-import { convertUTCDate } from './helpers'
+// functions => put into index tsx
+import paginateRows from './helpers/paginate'
+import sortRows from './helpers/sort'
+import filterData from './helpers/filter'
 
+import { convertUTCDate } from './helpers'
 import { Data, SortKeys, SortOrder } from './types'
 
 interface HeadItem {
@@ -50,58 +53,8 @@ interface MuiTableProps {
     data: Data
 }
 
-function paginateRows(
-    sortedRows: Data,
-    activePage: number,
-    rowsPerPage: number
-) {
-    return [...sortedRows].slice(
-        (activePage - 1) * rowsPerPage,
-        activePage * rowsPerPage
-    )
-}
-
-function filterData(data: Data, filter: string, filterBy: SortKeys): Data {
-    if (filter === '') return data
-
-    const filteredData: Data = data.filter((item) => {
-        if (filterBy === 'id') {
-            console.log('czy szuka tu ')
-            //   return item[filterBy] === filter;   // ext the same
-            return item[filterBy].includes(filter) // includes
-        }
-        if (filterBy === 'mission_name') {
-            return item[filterBy]
-                .toLocaleLowerCase()
-                .includes(filter.toLocaleLowerCase())
-        }
-        if (filterBy === 'launch_date_utc') {
-            //   return convertUTCDate(item[filterBy]) === filter;    // ext the same
-            return convertUTCDate(item[filterBy]).includes(filter) // include
-        }
-        return filteredData
-    })
-    return filteredData
-}
-
-function sortRows(data: Data, sort: SortOrder, sortBy: SortKeys): Data {
-    const reverse = sort === 'desc'
-    let sortedData2: Data = []
-
-    if (sortBy === 'id') {
-        sortedData2 = data.sort((a, b) =>
-            Number(a[sortBy]) > Number(b[sortBy]) ? 1 : -1
-        )
-    } else {
-        sortedData2 = data.sort((a, b) => (a[sortBy] > b[sortBy] ? 1 : -1))
-    }
-
-    if (reverse) return sortedData2.reverse()
-    return sortedData2
-}
-
 const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
-    const [activePage, handleActivePage] = useState<number>(1)
+    const [activePage, setActivePage] = useState<number>(1)
     const [filterValue, setFilterValue] = useState<string>('')
     const [filterBy, setFilterBy] = useState<SortKeys>('mission_name')
     // sort state
@@ -109,20 +62,20 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
     const [sortBy, setSortBy] = useState<SortKeys>('id')
 
     const handleSort = (property: SortKeys) => {
-        handleActivePage(1)
+        setActivePage(1)
         const isAsc = sortBy === property && sort === 'asc'
         setSort(isAsc ? 'desc' : 'asc')
         setSortBy(property)
     }
 
     function handleFilter(e: React.ChangeEvent<HTMLInputElement>) {
-        handleActivePage(1)
+        setActivePage(1)
         const { value } = e.target
         setFilterValue(value)
     }
 
     function handleFilterBy(e: SelectChangeEvent) {
-        handleActivePage(1)
+        setActivePage(1)
         setFilterValue('')
         const value = e.target.value as
             | 'launch_date_utc'
@@ -239,7 +192,7 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
                 <Pagination
                     activePage={activePage}
                     totalPages={totalPages}
-                    onPageChange={handleActivePage}
+                    onPageChange={setActivePage}
                 />
             </Paper>
         </Box>

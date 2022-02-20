@@ -10,14 +10,14 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
 interface ParginationProps {
     activePage: number
     totalPages: number
-    setActivePage: (page: number) => void
+    onPageChange: (page: number) => void
 }
 
 // eslint-disable-next-line react/function-component-definition
 const Pagination: React.FC<ParginationProps> = ({
     activePage,
     totalPages,
-    setActivePage,
+    onPageChange,
 }) => {
     const pagesToShow = totalPages === 0 ? 1 : totalPages
     return (
@@ -29,7 +29,7 @@ const Pagination: React.FC<ParginationProps> = ({
             mb={4}
         >
             <Button
-                onClick={() => setActivePage(1)}
+                onClick={() => onPageChange(1)}
                 disabled={activePage === 1}
                 variant="outlined"
                 startIcon={<SkipPreviousIcon />}
@@ -37,7 +37,7 @@ const Pagination: React.FC<ParginationProps> = ({
                 first
             </Button>
             <Button
-                onClick={() => setActivePage(activePage - 1)}
+                onClick={() => onPageChange(activePage - 1)}
                 disabled={activePage === 1}
                 variant="outlined"
                 startIcon={<NavigateBeforeIcon />}
@@ -46,13 +46,13 @@ const Pagination: React.FC<ParginationProps> = ({
                 Page {activePage} of {pagesToShow}
             </p>
             <Button
-                onClick={() => setActivePage(activePage + 1)}
+                onClick={() => onPageChange(activePage + 1)}
                 disabled={activePage === totalPages}
                 variant="outlined"
                 endIcon={<NavigateNextIcon />}
             />
             <Button
-                onClick={() => setActivePage(totalPages)}
+                onClick={() => onPageChange(totalPages)}
                 disabled={activePage === totalPages}
                 variant="outlined"
                 endIcon={<SkipNextIcon />}
