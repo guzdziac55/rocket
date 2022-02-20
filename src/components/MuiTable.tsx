@@ -20,27 +20,7 @@ import Pagination from './Pagination'
 
 import { convertUTCDate } from './helpers'
 
-const fakeData = [
-    {
-        launch_date_utc: '2014-01-06T18:06:00.000Z',
-        mission_name: 'Thaicom 6',
-        id: '13',
-    },
-    {
-        launch_date_utc: '2014-09-07T05:00:00.000Z',
-        mission_name: 'AsiaSat 6',
-        id: '17',
-    },
-    {
-        launch_date_utc: '2015-12-22T01:29:00.000Z',
-        mission_name: 'OG-2 Mission 2',
-        id: '25',
-    },
-]
-
-type Data = typeof fakeData
-type SortKeys = keyof Data[0]
-type SortOrder = 'asc' | 'desc'
+import { Data, SortKeys, SortOrder } from './types'
 
 interface HeadItem {
     id: SortKeys
@@ -154,7 +134,7 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
     const rowsPerPage: number = 5
     const filteredData = filterData(data, filterValue, filterBy)
     const sortabledData = sortRows(filteredData, sort, sortBy)
-    const dataCount: number = sortabledData.length
+    const dataCount = sortabledData.length
     const totalPages: number = Math.ceil(dataCount / rowsPerPage)
     const paginatedData = paginateRows(sortabledData, activePage, rowsPerPage)
 
