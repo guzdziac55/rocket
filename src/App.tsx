@@ -1,7 +1,4 @@
-import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import SortableTable from "./components/SortableTable";
 import MuiTable from "./components/MuiTable";
 import { StyledEngineProvider } from "@mui/material/styles";
 const fakeData = [
@@ -62,14 +59,10 @@ const fakeData = [
   },
 ];
 
-// filter by 2016-01-19
-// yyyy-mm-dd
-
 function App() {
   return (
     <StyledEngineProvider>
       <div className="App">
-        {/* <SortableTable data={fakeData}></SortableTable> */}
         <MuiTable data={fakeData}></MuiTable>
       </div>
     </StyledEngineProvider>

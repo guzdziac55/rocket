@@ -18,7 +18,7 @@ const fakeData = [
   },
 ];
 
-type Data = typeof fakeData; // data type from fake data
+type Data = typeof fakeData;
 
 export function paginateRows(
   sortedRows: Data,
@@ -31,6 +31,11 @@ export function paginateRows(
   );
 }
 
-export function convertUTCDate(dateUTC: string): string {
-  return moment(dateUTC, "YYYY-MM-DDTHH:mm:ssZ").local().format("YYYY-MM-DD");
+export function convertUTCDate(
+  dateUTC: string,
+  dateOnly: boolean = true
+): string {
+  const format = dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD,   h:mm:ss a";
+
+  return moment(dateUTC, "YYYY-MM-DDTHH:mm:ssZ").local().format(format);
 }

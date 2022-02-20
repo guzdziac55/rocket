@@ -18,6 +18,7 @@ import Pagination from "./Pagination";
 
 import { SelectChangeEvent } from "@mui/material";
 import { convertUTCDate } from "./helpers";
+import Stack from "@mui/material/Stack";
 
 const fakeData = [
   {
@@ -36,25 +37,6 @@ const fakeData = [
     id: "25",
   },
 ];
-
-const sampleTime = "2015-12-22T01:29:00.000Z";
-
-// const time = new Date(sampleTime).toLocaleTimeString([], {
-//   //   year: "numeric",
-//   //   day: "numeric",
-//   //   month: "numeric",
-//   year: "numeric",
-//   month: "numeric",
-//   day: "numeric",
-//   hour: "2-digit",
-//   minute: "2-digit",
-
-//   //   timeStyle: "long",
-//   //   hour12: true,
-//   //   timeZone: "UTC",
-// });
-
-// data types
 
 type Data = typeof fakeData;
 type SortKeys = keyof Data[0];
@@ -105,7 +87,8 @@ function filterData(data: Data, filter: string, filterBy: SortKeys): Data {
   const filteredData: Data = data.filter((item) => {
     if (filterBy === "id") {
       console.log("czy szuka tu ");
-      return item[filterBy] === filter;
+      //   return item[filterBy] === filter;   // ext the same
+      return item[filterBy].includes(filter); // includes
     }
     if (filterBy === "mission_name") {
       return item[filterBy]
@@ -113,14 +96,8 @@ function filterData(data: Data, filter: string, filterBy: SortKeys): Data {
         .includes(filter.toLocaleLowerCase());
     }
     if (filterBy === "launch_date_utc") {
-      //   return convertUTCDate(item[filterBy]) === filter;
-      return convertUTCDate(item[filterBy]).includes(filter);
-
-      // musimy mieć łańuch znaków year osobno w zmiennej
-      //  bierzącego itemu np 2015
-      // i wtedy pytać go czy input zawieera 2015
-
-      // gdy mamy input zawierający na calym itemie to szuka też po sekundach !
+      //   return convertUTCDate(item[filterBy]) === filter;    // ext the same
+      return convertUTCDate(item[filterBy]).includes(filter); // include
     }
     return filteredData;
   });
@@ -146,10 +123,6 @@ function sortRows(data: Data, sort: SortOrder, sortBy: SortKeys): Data {
 }
 
 const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
-  //   console.log(time);
-  console.log(sampleTime);
-  console.log(convertUTCDate(sampleTime));
-
   const [activePage, setActivePage] = useState<number>(1);
   const [filterValue, setFilterValue] = useState<string>("");
   const [filterBy, setFilterBy] = useState<SortKeys>("mission_name");
@@ -178,14 +151,15 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
   }
 
   const rowsPerPage: number = 5;
-
   const filteredData = filterData(data, filterValue, filterBy);
   const sortabledData = sortRows(filteredData, sort, sortBy);
-
   const dataCount: number = sortabledData.length;
   const totalPages: number = Math.ceil(dataCount / rowsPerPage);
-
   const paginatedData = paginateRows(sortabledData, activePage, rowsPerPage);
+
+  console.log("math ceil test");
+  console.log(Math.ceil(0 / 10));
+
   return (
     <Box
       mt={5}
@@ -198,33 +172,34 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
           maxWidth: "1250px",
         }}
       >
-        {/* filter selector  */}
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Find:</InputLabel>
-          <Select
-            sx={{ minWidth: "460px" }}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="filter"
-            onChange={handleFilterBy}
-            value={filterBy}
-          >
-            <MenuItem value="id">id</MenuItem>
-            <MenuItem value="mission_name">name</MenuItem>
-            <MenuItem value="launch_date_utc">date</MenuItem>
-          </Select>
-        </FormControl>
-        {/*  input control for filter   */}
-        <FormControl>
-          {/* <InputLabel id="demo-simple-select-label">Sort By:</InputLabel> */}
-          <TextField
-            // helperText={`enter your: ${}`}
-            id="demo-helper-text-aligned"
-            value={filterValue}
-            onChange={handleFilter}
-          />
-        </FormControl>
-
+        <h3>Filter data</h3>
+        <Stack direction="row" justifyContent="center" spacing={3} mb={3}>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">Find:</InputLabel>
+            <Select
+              sx={{ minWidth: "460px" }}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="filter"
+              onChange={handleFilterBy}
+              value={filterBy}
+            >
+              <MenuItem value="id">id</MenuItem>
+              <MenuItem value="mission_name">name</MenuItem>
+              <MenuItem value="launch_date_utc">date</MenuItem>
+            </Select>
+          </FormControl>
+          {/*  input control for filter   */}
+          <FormControl>
+            {/* <InputLabel id="demo-simple-select-label">Sort By:</InputLabel> */}
+            <TextField
+              // helperText={`enter your: ${}`}
+              id="demo-helper-text-aligned"
+              value={filterValue}
+              onChange={handleFilter}
+            />
+          </FormControl>
+        </Stack>
         {/* <input value={filterValue} onChange={(e) => handleFilter(e)}></input> */}
         <Table sx={{ mb: 5 }}>
           <TableHead>
@@ -245,17 +220,14 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* {paginateRows(
-              sortRows(data, sort, sortBy),
-              activePage,
-              rowsPerPage
-            ) */}
             {paginatedData.map((item) => {
               return (
                 <TableRow key={item.id}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.mission_name}</TableCell>
-                  <TableCell>{convertUTCDate(item.launch_date_utc)}</TableCell>
+                  <TableCell>
+                    {convertUTCDate(item.launch_date_utc, false)}
+                  </TableCell>
                 </TableRow>
               );
             })}

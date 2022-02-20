@@ -1,8 +1,5 @@
 import React from "react";
-
 import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-// icons
 import { Stack } from "@mui/material";
 
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
@@ -25,9 +22,16 @@ const Pagination: React.FC<ParginationProps> = ({
   totalPages,
   setActivePage,
 }) => {
+  const pagesToShow = totalPages === 0 ? 1 : totalPages;
   return (
     <>
-      <Stack direction="row" justifyContent="center" spacing={2} mb={4}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        spacing={2}
+        mb={4}
+      >
         <Button
           onClick={() => setActivePage(1)}
           disabled={activePage === 1}
@@ -43,7 +47,7 @@ const Pagination: React.FC<ParginationProps> = ({
           startIcon={<NavigateBeforeIcon />}
         ></Button>
         <p>
-          Page {activePage} of {totalPages}
+          Page {activePage} of {pagesToShow}
         </p>
         <Button
           onClick={() => setActivePage(activePage + 1)}
