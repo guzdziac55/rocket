@@ -1,6 +1,7 @@
 import './App.css'
 import { StyledEngineProvider } from '@mui/material/styles'
 import MuiTable from './components/MuiTable'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 const fakeData = [
     {
@@ -60,13 +61,17 @@ const fakeData = [
     },
 ]
 
+const queryClient = new QueryClient()
+
 function App() {
     return (
-        <StyledEngineProvider>
-            <div className="App">
-                <MuiTable data={fakeData} />
-            </div>
-        </StyledEngineProvider>
+        <QueryClientProvider client={queryClient}>
+            <StyledEngineProvider>
+                <div className="App">
+                    <MuiTable data2={fakeData} />
+                </div>
+            </StyledEngineProvider>
+        </QueryClientProvider>
     )
 }
 

@@ -15,6 +15,7 @@ import paginateRows from './helpers/paginate'
 import sortRows from './helpers/sort'
 import filterData from './helpers/filter'
 import { Data, SortKeys, SortOrder } from './types'
+import { useQuery } from 'react-query'
 
 interface HeadItem {
     id: SortKeys
@@ -41,10 +42,25 @@ const headItems: readonly HeadItem[] = [
 ]
 
 interface MuiTableProps {
-    data: Data
+    data2: Data
 }
 
-const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
+const MuiTable: React.FC<MuiTableProps> = ({ data2 }) => {
+    // const queryClient = useQueryClient()
+
+    const { isLoading, error, data, isFetching } = useQuery('tableData', () =>
+        fetch('https://mocki.io/v1/e139fed9-43a0-4059-9bae-0665e7965778').then(
+            (res) => res.json()
+        )
+    )
+
+    console.log('data from query')
+    console.log(data)
+
+    console.log(isLoading)
+    console.log(error)
+    console.log(isFetching)
+
     const [activePage, setActivePage] = useState<number>(1)
     const [filterValue, setFilterValue] = useState<string>('')
     const [filterBy, setFilterBy] = useState<SortKeys>('mission_name')
@@ -77,8 +93,8 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
     const rowsPerPage: number = 10
 
     const filteredData = useMemo(
-        () => filterData(data, filterValue, filterBy),
-        [data, filterValue, filterBy]
+        () => filterData(data2, filterValue, filterBy),
+        [data2, filterValue, filterBy]
     )
     const sortabledData = useMemo(
         () => sortRows(filteredData, sortOrder, sortBy),
