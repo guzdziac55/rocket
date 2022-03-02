@@ -6,7 +6,6 @@ function filterData(data: Data, filter: string, filterBy: SortKeys): Data {
 
     const filteredData: Data = data.filter((item) => {
         if (filterBy === 'id') {
-            console.log('czy szuka tu ')
             //   return item[filterBy] === filter;   // ext the same
             return item[filterBy].includes(filter) // includes
         }
