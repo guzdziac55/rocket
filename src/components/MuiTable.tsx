@@ -1,28 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import Table from '@mui/material/Table'
-import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
-import TableRow from '@mui/material/TableRow'
-import TableCell from '@mui/material/TableCell'
-import TableSortLabel from '@mui/material/TableSortLabel'
-
+import { Box, Paper, SelectChangeEvent } from '@mui/material'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
-
-import { Box, Paper, SelectChangeEvent } from '@mui/material'
-
 import Stack from '@mui/material/Stack'
 import Pagination from './Pagination'
-
-// functions => put into index tsx
+import TableHeader from './TableHeader'
+import RowItem from './RowItem'
 import paginateRows from './helpers/paginate'
 import sortRows from './helpers/sort'
 import filterData from './helpers/filter'
-
-import { convertUTCDate } from './helpers'
 import { Data, SortKeys, SortOrder } from './types'
 
 interface HeadItem {
@@ -58,13 +49,13 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
     const [filterValue, setFilterValue] = useState<string>('')
     const [filterBy, setFilterBy] = useState<SortKeys>('mission_name')
     // sort state
-    const [sort, setSort] = useState<SortOrder>('asc')
+    const [sortOrder, setSortOrder] = useState<SortOrder>('asc') // change to sort order
     const [sortBy, setSortBy] = useState<SortKeys>('id')
 
     const handleSort = (property: SortKeys) => {
         setActivePage(1)
-        const isAsc = sortBy === property && sort === 'asc'
-        setSort(isAsc ? 'desc' : 'asc')
+        const isAsc = sortBy === property && sortOrder === 'asc'
+        setSortOrder(isAsc ? 'desc' : 'asc')
         setSortBy(property)
     }
 
@@ -83,13 +74,24 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
             | 'id'
         setFilterBy(value)
     }
+    const rowsPerPage: number = 10
 
-    const rowsPerPage: number = 5
-    const filteredData = filterData(data, filterValue, filterBy)
-    const sortabledData = sortRows(filteredData, sort, sortBy)
+    const filteredData = useMemo(
+        () => filterData(data, filterValue, filterBy),
+        [data, filterValue, filterBy]
+    )
+    const sortabledData = useMemo(
+        () => sortRows(filteredData, sortOrder, sortBy),
+        [filteredData, sortOrder, sortBy]
+    )
+
+    const paginatedData = useMemo(
+        () => paginateRows(sortabledData, activePage, rowsPerPage),
+        [sortabledData, activePage, rowsPerPage]
+    )
+
     const dataCount = sortabledData.length
     const totalPages: number = Math.ceil(dataCount / rowsPerPage)
-    const paginatedData = paginateRows(sortabledData, activePage, rowsPerPage)
 
     let textFilterHint: string
     switch (filterBy) {
@@ -144,9 +146,7 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
                             <MenuItem value="launch_date_utc">date</MenuItem>
                         </Select>
                     </FormControl>
-                    {/*  input control for filter   */}
                     <FormControl>
-                        {/* <InputLabel id="demo-simple-select-label">Sort By:</InputLabel> */}
                         <TextField
                             helperText={textFilterHint}
                             id="demo-helper-text-aligned"
@@ -155,37 +155,16 @@ const MuiTable: React.FC<MuiTableProps> = ({ data }) => {
                         />
                     </FormControl>
                 </Stack>
-                {/* <input value={filterValue} onChange={(e) => handleFilter(e)}></input> */}
                 <Table sx={{ mb: 5 }}>
-                    <TableHead>
-                        <TableRow>
-                            {headItems.map((item) => (
-                                <TableCell key={item.id}>
-                                    <TableSortLabel
-                                        active={sortBy === item.id}
-                                        direction={
-                                            sortBy === item.id ? sort : 'desc'
-                                        }
-                                        onClick={() => handleSort(item.id)}
-                                    >
-                                        {item.label}
-                                    </TableSortLabel>
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
+                    <TableHeader
+                        onHandleSort={handleSort}
+                        sortBy={sortBy}
+                        sortOrder={sortOrder}
+                        headerItems={headItems}
+                    />
                     <TableBody>
                         {paginatedData.map((item) => (
-                            <TableRow key={item.id}>
-                                <TableCell>{item.id}</TableCell>
-                                <TableCell>{item.mission_name}</TableCell>
-                                <TableCell>
-                                    {convertUTCDate(
-                                        item.launch_date_utc,
-                                        false
-                                    )}
-                                </TableCell>
-                            </TableRow>
+                            <RowItem item={item}></RowItem>
                         ))}
                     </TableBody>
                 </Table>
