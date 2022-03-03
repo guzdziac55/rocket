@@ -1,37 +1,16 @@
 import paginateRows from './paginate'
-import { Data, SortKeys } from './../types'
+import { mockData } from './mockData'
 
-const fakeData = [
-    {
-        launch_date_utc: '2014-01-06T18:06:00.000Z',
-        mission_name: 'Thaicom 6',
-        id: '13',
-    },
-    {
-        launch_date_utc: '2014-09-07T05:00:00.000Z',
-        mission_name: 'AsiaSat 6',
-        id: '17',
-    },
-    {
-        launch_date_utc: '2015-12-22T01:29:00.000Z',
-        mission_name: 'OG-2 Mission 2',
-        id: '25',
-    },
-]
+describe('paginateRows', () => {
+    const activePage = 1
+    const rowsPerPage = 10
 
-describe('Testing paginateRows func:', () => {
-    const array: Data = fakeData
-    const activePage: number = 1
-    const rowsPerPage: number = 10
-
-    it('return single object ', () => {
-        expect(paginateRows(array, activePage, rowsPerPage))
+    it('page: 1, rows per page: 10 returns 10 rows ', () => {
+        expect(paginateRows(mockData, activePage, rowsPerPage).length).toEqual(
+            10
+        )
+    })
+    it('returns an empty array when the page is higher than maximum', () => {
+        expect(paginateRows(mockData, 10000, rowsPerPage)).toEqual([])
     })
 })
-
-// it('return two objects ', () => {
-//     expect(filter(data, '2014', 'launch_date_utc').length).toEqual(2)
-// })
-// it('return empty array ', () => {
-//     expect(filter(data, '2018', 'id')).toEqual([])
-// })
